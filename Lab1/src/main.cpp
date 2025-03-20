@@ -1,9 +1,8 @@
-﻿#include <iostream>
-#include "ParallelIntegral/Integrator.hpp"
+﻿#include <cstdio>
+#include <iostream>
+#include "Lab1/Integrator.hpp"
 #include <chrono>
-
-
-class MyFunction : public IFunction { double Calculate(double x) { return cos(x); } };
+#include <cmath>
 
 
 int main()
@@ -11,22 +10,21 @@ int main()
 	std::chrono::high_resolution_clock::time_point start, end;
 	double deltaTime{ 0 };
 
-	double leftBound{ 1 }, rightBound{ 2 }, step{ 1.0e-8 };
 	double result{ 0 };
+	auto lambda = [](double x) { return std::cos(x); };
 
-	auto& ptrFunction = std::make_shared<MyFunction>();
-	Integrator cosIntegral;
-	
-	std::cout << "Left bound:  " << leftBound << std::endl;
-	std::cout << "Right bound: " << rightBound << std::endl;
-	std::cout << "Step:        " << step << std::endl <<std::endl;
+	Integrator integrator{ 1, 2, 1.0e-7 };
 
-	for (size_t cores = 1; cores <= cosIntegral.GetMaxCpuCount(); cores++)
+	std::cout << "Left bound:  " << integrator.GetLeftBound() << std::endl;
+	std::cout << "Right bound: " << integrator.GetRightBound() << std::endl;
+	std::cout << "Step:        " << integrator.GetStep() << std::endl <<std::endl;
+
+	for (size_t cores = 1; cores <= integrator.GetMaxCpuCount(); cores++)
 	{
-		cosIntegral.SetCpuCount(cores);
+		integrator.SetCpuCount(cores);
 
 		start = std::chrono::high_resolution_clock::now();
-		result = cosIntegral.Calculate(ptrFunction, leftBound, rightBound, step);
+		result = integrator.Calculate(lambda);
 		end = std::chrono::high_resolution_clock::now();
 
 		deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1.0e+6;
@@ -36,7 +34,8 @@ int main()
 		std::cout << "Result:   " << result << std::endl << std::endl;
 	}
 
-	system("pause");
+	std::cout << "Press any key..." << std::endl;
+	getchar();
 	return 0;
 }
 
