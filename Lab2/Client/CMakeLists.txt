@@ -9,5 +9,3 @@ add_executable(Client src/main.cpp
 	src/Integrator.cpp)
 
 target_include_directories(Client PRIVATE "${PROJECT_SOURCE_DIR}/include/")
-target_include_directories(Client PRIVATE "D:/Vs_projs/boost_1_87_0/")
-#target_include_directories(Client PRIVATE "/run/media/ischwarz/DATA/Vs_projs/boost_1_87_0/")
